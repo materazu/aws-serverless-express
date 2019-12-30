@@ -1,4 +1,4 @@
-# AWS Serverless Express
+# AWS Serverless Express - Fork for large headers with options
 
 [![Join the chat at https://gitter.im/awslabs/aws-serverless-express](https://badges.gitter.im/awslabs/aws-serverless-express.svg)](https://gitter.im/awslabs/aws-serverless-express?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/awslabs/aws-serverless-express.svg?branch=master)](https://travis-ci.org/awslabs/aws-serverless-express) [![npm](https://img.shields.io/npm/v/aws-serverless-express.svg)]() [![npm](https://img.shields.io/npm/dm/aws-serverless-express.svg)]() [![dependencies Status](https://david-dm.org/awslabs/aws-serverless-express/status.svg)](https://david-dm.org/awslabs/aws-serverless-express) [![devDependencies Status](https://david-dm.org/awslabs/aws-serverless-express/dev-status.svg)](https://david-dm.org/awslabs/aws-serverless-express?type=dev)
@@ -18,8 +18,17 @@ const awsServerlessExpress = require('aws-serverless-express')
 const app = require('./app')
 const server = awsServerlessExpress.createServer(app)
 
-exports.handler = (event, context) => { awsServerlessExpress.proxy(server, event, context) }
+exports.handler = (event, context) => { awsServerlessExpress.proxy(server, event, context, options) }
 ```
+
+Available options:
+- apiGatewayEventWhitelist
+- apiGatewayContextWhitelist
+
+These options (disabled by default) can be used to limit the parameters that get mapped to the apiGateway parameter on the request object when using the eventContext middleware.
+This is in order to prevent the request header to exceed the maximum size (See [Issue #199](https://github.com/awslabs/aws-serverless-express/issues/199))
+
+e.g. options can be set to `{apiGatewayEventWhitelist: ['requestContext']}` to limit the mapped event to just the requestContext and avoid issues when large cookies or authorization header values are used.
 
 [Package and create your Lambda function](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-create-deployment-pkg.html), then configure a simple proxy API using Amazon API Gateway and integrate it with your Lambda function.
 
